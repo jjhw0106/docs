@@ -10,8 +10,8 @@
 
 | 단계 | 참여자 | 산출물 및 경로 (예시: 로또 서비스) |
 |---|---|---|
-| 1. 기획 | 사용자 + Main Claude + 기획자 에이전트 | `my-docs/agents-cowork/lotto-service-prd.md` |
-| 2. 핸드오프 | Main Claude | `my-docs/agents-cowork/lotto-service-backend-gemini-handoff.md`<br>`my-docs/agents-cowork/lotto-service-frontend-gemini-handoff.md` |
+| 1. 기획 | 사용자 + Main Claude + 기획자 에이전트 | `my-docs/agents-cowork/prds/lotto-service-prd.md` |
+| 2. 핸드오프 | Main Claude | `my-docs/agents-cowork/handoffs/lotto-service-backend-gemini-handoff.md`<br>`my-docs/agents-cowork/handoffs/lotto-service-frontend-gemini-handoff.md` |
 | 3. 개발 | Gemini BE 세션, Gemini FE 세션 (독립) | 각 서비스 소스 코드 및 단위 테스트 |
 | 4. 코드 리뷰 | Claude BE 에이전트, Claude FE 에이전트 | 리뷰 코멘트 및 리팩토링된 코드 |
 | 5. 통합 리뷰 | 사용자 + Main Claude | 최종 승인 시그널 |
