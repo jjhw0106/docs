@@ -2,7 +2,7 @@
 
 ## 바이브코딩(Claude <-> Gemini 협업) 워크플로우
 
-![Development Flow](agents-cowork/md-images/diagram-agent-orchestration.svg)
+<p align="center"><img src="agents-cowork/md-images/diagram-agent-orchestration.svg" alt="Development Flow"></p>
 
 ---
 
