@@ -1,6 +1,4 @@
-# Development Flow - Agent Orchestration
-
-## 바이브코딩(Claude <-> Gemini 협업) 워크플로우
+# 바이브코딩(Claude <-> Gemini 협업) 오케스트레이션 워크플로우
 
 <p align="center"><img src="agents-cowork/md-images/diagram-agent-orchestration.svg" alt="Development Flow"></p>
 
@@ -42,3 +40,4 @@
 ### 5. 완료 및 배포 준비
 * QA 성공 시 **배포 준비 완료 시그널** 전송.
 * 동시에 **my-docs**의 관련 문서들을 최신 상태로 업데이트하며 프로세스 종료.
+
