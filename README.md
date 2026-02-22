@@ -1,6 +1,6 @@
 ﻿# 바이브코딩(Claude <-> Gemini 오케스트레이션) 워크플로우
 
-<p align="center"><img src="agents-architecture-manual/md-images/diagram-agent-orchestration-v2.svg" alt="Development Flow"></p>
+<p align="center"><img src="agents-architecture-manual/md-images/diagram-agent-orchestration-v2.png" alt="Development Flow"></p>
 
 ---
 
