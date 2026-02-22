@@ -1,4 +1,4 @@
-# 바이브코딩(Claude <-> Gemini 오케스트레이션) 워크플로우
+﻿# 바이브코딩(Claude <-> Gemini 오케스트레이션) 워크플로우
 
 <p align="center"><img src="agents-cowork/md-images/diagram-agent-orchestration.svg" alt="Development Flow"></p>
 
@@ -8,13 +8,13 @@
 
 | 단계 | 참여자 | 산출물 및 경로 (예시: 로또 서비스) |
 |---|---|---|
-| 1. 기획 | 사용자 + Main Claude + 기획자 에이전트 | `my-docs/agents-cowork/prds/lotto-service-prd.md` |
-| 2. 핸드오프 | Main Claude | `my-docs/agents-cowork/handoffs/lotto-service-backend-gemini-handoff.md`<br>`my-docs/agents-cowork/handoffs/lotto-service-frontend-gemini-handoff.md` |
+| 1. 기획 | 사용자 + Main Claude + 기획자 에이전트 | `docs/agents-cowork/prds/lotto-service-prd.md` |
+| 2. 핸드오프 | Main Claude | `docs/agents-cowork/handoffs/lotto-service-backend-gemini-handoff.md`<br>`docs/agents-cowork/handoffs/lotto-service-frontend-gemini-handoff.md` |
 | 3. 개발 | Gemini BE 세션, Gemini FE 세션 (독립) | 각 서비스 소스 코드 및 단위 테스트 |
 | 4. 코드 리뷰 | Claude BE 에이전트, Claude FE 에이전트 | 리뷰 코멘트 및 리팩토링된 코드 |
 | 5. 통합 리뷰 | 사용자 + Main Claude | 최종 승인 시그널 |
 | 6. QA | Main Claude | 테스트 결과 리포트 |
-| 7. 배포 준비 | - | 배포용 아티팩트 및 `my-docs/` 문서 업데이트 |
+| 7. 배포 준비 | - | 배포용 아티팩트 및 `docs/` 문서 업데이트 |
 
 ---
 
@@ -39,6 +39,6 @@
 
 ### 5. 완료 및 배포 준비
 * QA 성공 시 **배포 준비 완료 시그널** 전송.
-* 동시에 **my-docs**의 관련 문서들을 최신 상태로 업데이트하며 프로세스 종료.
+* 동시에 **docs**의 관련 문서들을 최신 상태로 업데이트하며 프로세스 종료.
 
 

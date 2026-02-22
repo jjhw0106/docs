@@ -1,4 +1,4 @@
-# Document Structure
+﻿# Document Structure
 
 ```mermaid
 flowchart TB
@@ -14,7 +14,7 @@ flowchart TB
         AGENT_MEM[".claude/agent-memory/<br/>에이전트별 메모리<br/>(에이전트 실행 시)"]
     end
 
-    subgraph docs["my-docs/"]
+    subgraph docs["docs/"]
         TODO["To-Do.md<br/>할 일 추적"]
         DEVLOG["개발일지/<br/>작업 기록"]
         SETUP["개발환경 세팅/<br/>환경 구축 가이드"]
