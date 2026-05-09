@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 주도 개발 — 디렉토리 아키텍처 매뉴얼</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--border:#30363d;
+  --text:#e6edf3;--muted:#8b949e;--blue:#58a6ff;--purple:#bc8cff;
+  --green:#3fb950;--red:#f85149;--yellow:#d29922
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:"Noto Sans KR",-apple-system,sans-serif;font-size:15px;line-height:1.7}
+nav{position:sticky;top:0;z-index:100;background:rgba(13,17,23,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px}
+nav ul{display:flex;gap:4px;list-style:none;max-width:960px;margin:0 auto;overflow-x:auto;padding:10px 0}
+nav ul::-webkit-scrollbar{height:0}
+nav a{color:var(--muted);text-decoration:none;font-size:12px;font-weight:500;padding:4px 10px;border-radius:20px;white-space:nowrap;transition:all .2s}
+nav a:hover{color:var(--text);background:var(--bg3)}
+.wrap{max-width:960px;margin:0 auto;padding:48px 24px 80px}
+.hero{text-align:center;padding:48px 0 40px;border-bottom:1px solid var(--border);margin-bottom:48px}
+.hero h1{font-size:28px;font-weight:700;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px}
+.hero p{color:var(--muted);font-size:15px;line-height:1.8}
+section{margin-bottom:56px;scroll-margin-top:60px}
+h2{font-size:20px;font-weight:700;padding:10px 0 10px 16px;border-left:3px solid var(--blue);margin-bottom:20px}
+h3{font-size:15px;font-weight:600;color:var(--blue);margin:24px 0 12px}
+p.sub{color:var(--muted);margin-bottom:16px}
+.tw{overflow-x:auto;margin:16px 0;border-radius:8px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{background:var(--bg3);color:var(--muted);font-weight:600;padding:10px 16px;text-align:left;border-bottom:1px solid var(--border)}
+td{padding:10px 16px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+code{font-family:"SF Mono",Consolas,monospace;font-size:12px;background:var(--bg3);padding:2px 6px;border-radius:4px;color:var(--blue)}
+strong{color:var(--yellow)}
+pre{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:8px;padding:20px;overflow-x:auto;margin:16px 0;font-family:"SF Mono",Consolas,monospace;font-size:13px;line-height:1.6;color:#adbac7}
+.note{background:rgba(88,166,255,.07);border:1px solid rgba(88,166,255,.2);border-left:3px solid var(--blue);border-radius:6px;padding:12px 16px;font-size:13px;color:var(--muted);margin:16px 0}
+.note strong{color:var(--blue);-webkit-text-fill-color:var(--blue)}
+.sym{display:flex;flex-direction:column;align-items:center;margin:24px 0}
+.sym-box{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px 24px;width:100%;max-width:600px}
+.sym-box.src{border-color:var(--purple)}
+.sym-box.dst{border-color:var(--green)}
+.sym-title{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:10px}
+.sym-tags{display:flex;gap:8px;flex-wrap:wrap}
+.tag{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:12px;font-family:monospace}
+.tag.hi{border-color:var(--blue);color:var(--blue)}
+.arr{display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:4px}
+.arr-line{width:2px;height:16px;background:linear-gradient(to bottom,var(--purple),var(--green))}
+.arr-label{color:var(--muted);font-size:11px}
+.steps{display:flex;flex-direction:column;margin:16px 0}
+.step{display:flex;gap:16px;position:relative}
+.step:not(:last-child)::after{content:"";position:absolute;left:19px;top:44px;width:2px;height:calc(100% - 20px);background:var(--border)}
+.step-n{width:40px;height:40px;border-radius:50%;background:var(--bg2);border:2px solid var(--blue);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--blue);font-size:14px;flex-shrink:0}
+.step-b{padding:8px 0 24px;flex:1}
+.step-t{display:block;color:var(--text);margin-bottom:4px;font-size:14px;font-weight:600}
+.step-d{color:var(--muted);font-size:13px;font-family:monospace}
+.ck{list-style:none;display:flex;flex-direction:column;gap:8px;margin:16px 0}
+.ck li{display:flex;gap:10px;align-items:flex-start;font-size:14px}
+.ck li::before{content:"☐";color:var(--blue);font-size:16px;line-height:1.4;flex-shrink:0}
+.ck li.sub{padding-left:28px}
+.ck li.sub::before{color:var(--muted);font-size:14px}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;margin-right:4px}
+.g{background:rgba(63,185,80,.15);color:#3fb950;border:1px solid rgba(63,185,80,.3)}
+.b{background:rgba(88,166,255,.15);color:var(--blue);border:1px solid rgba(88,166,255,.3)}
+.r{background:rgba(248,81,73,.15);color:var(--red);border:1px solid rgba(248,81,73,.3)}
+.mm{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:24px;margin:16px 0;display:flex;justify-content:center;overflow-x:auto}
+footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--border);color:var(--muted);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+
+<nav><ul>
+  <li><a href="#s1">1. 왜 필요한가</a></li>
+  <li><a href="#s2">2. 워크스페이스 구조</a></li>
+  <li><a href="#s3">3. project-agent-config</a></li>
+  <li><a href="#s4">4. 심링크 아키텍처</a></li>
+  <li><a href="#s5">5. 컨텍스트 전략</a></li>
+  <li><a href="#s6">6. 에이전트 역할</a></li>
+  <li><a href="#s7">7. 스킬 시스템</a></li>
+  <li><a href="#s8">8. 핸드오프 흐름</a></li>
+  <li><a href="#s9">9. 네이밍 규칙</a></li>
+  <li><a href="#s10">10. 세팅 체크리스트</a></li>
+</ul></nav>
+
+<div class="wrap">
+
+<div class="hero">
+  <h1>AI 주도 개발 — 디렉토리 아키텍처 매뉴얼</h1>
+  <p>Claude Code + Gemini를 함께 쓰는 멀티 AI 개발 환경에서,<br>
+  <strong style="-webkit-text-fill-color:var(--text)">컨텍스트를 효율적으로 관리</strong>하고
+  <strong style="-webkit-text-fill-color:var(--text)">토큰을 절약</strong>하기 위한 디렉토리 설계 원칙과 구조.</p>
+</div>
+
+<!-- 1 -->
+<section id="s1">
+<h2>1. 왜 이 구조가 필요한가</h2>
+<p class="sub">AI 코딩 어시스턴트를 쓸 때 가장 큰 병목은 <strong style="color:var(--red);-webkit-text-fill-color:var(--red)">컨텍스트 오염</strong>이다.</p>
+<div class="tw"><table>
+  <thead><tr><th>문제</th><th>증상</th></tr></thead>
+  <tbody>
+    <tr><td>관련 없는 파일까지 컨텍스트에 포함</td><td>토큰 낭비, 응답 품질 저하</td></tr>
+    <tr><td>설정이 각 서비스 repo 안에 분산</td><td>AI 세팅 변경 시 여러 repo 수동 수정</td></tr>
+    <tr><td>Claude / Gemini 간 역할 경계 불명확</td><td>작업 중복, 핸드오프 혼선</td></tr>
+    <tr><td>서비스별 컨텍스트를 항상 전부 로드</td><td>불필요한 토큰 소모</td></tr>
+  </tbody>
+</table></div>
+<div class="note"><strong>해결 방향</strong> — 설정을 <code>docs</code> 단일 레포에서 중앙 관리하고, 심링크로 각 프로젝트에 연결한다. AI는 필요한 컨텍스트만 골라 로드할 수 있게 된다.</div>
+</section>
+
+<!-- 2 -->
+<section id="s2">
+<h2>2. 전체 워크스페이스 구조</h2>
+<pre>workspace/
+├── docs/                              ← Claude 설정 중앙 허브 (git 추적)
+│   ├── SETUP_WORKSPACE.md             ← 신규 PC 세팅 가이드
+│   ├── project-agent-config/          ← 프로젝트별 AI 설정 모음
+│   │   └── {project-name}/
+│   │       ├── CLAUDE.md
+│   │       ├── agents/
+│   │       ├── skills/
+│   │       ├── prds/
+│   │       ├── handoffs/
+│   │       └── service-context/
+│   └── agents-cowork/                 ← 워크플로우 다이어그램, 개발일지
+│
+├── project-{name}/                    ← 개발 프로젝트 (git 미추적 상위 폴더)
+│   ├── service-a/                     ← 개별 git 레포
+│   ├── service-b/
+│   ├── CLAUDE.md                      ← 심링크 → docs
+│   ├── .claude/
+│   │   ├── agents/                    ← 심링크 → docs
+│   │   └── skills/                    ← 심링크 → docs
+│   ├── prds/                          ← 심링크 → docs
+│   └── handoffs/                      ← 심링크 → docs
+│
+└── individual-{name}/                 ← 개인 학습, CS 정리 등</pre>
+</section>
+
+<!-- 3 -->
+<section id="s3">
+<h2>3. project-agent-config 상세 구조</h2>
+<p class="sub">프로젝트 하나(my-backoffice)를 예시로:</p>
+<pre>docs/project-agent-config/my-backoffice/
+│
+├── CLAUDE.md                 ← 오케스트레이터 지침 (아키텍처, 포트, 에이전트 역할)
+├── README.md                 ← 세팅 방법 가이드
+├── agents/
+│   ├── planner.md            ← Opus: 아키텍처 설계, PRD, 핸드오프
+│   ├── be-agent.md           ← Sonnet: BE 구현 + 코드 리뷰
+│   ├── fe-agent.md           ← Sonnet: FE 구현 + 코드 리뷰
+│   └── qa.md                 ← Sonnet: 테스트 계획, QA 검증
+├── skills/
+│   ├── prd-writer/SKILL.md
+│   ├── handoff-generator/SKILL.md
+│   └── code-reviewer/SKILL.md
+├── prds/
+├── handoffs/
+└── service-context/
+    ├── auth-server/CLAUDE.md   +   auth-domain/SKILL.md
+    ├── gateway/CLAUDE.md       +   gateway-domain/SKILL.md
+    ├── lotto-server/CLAUDE.md  +   lotto-domain/SKILL.md
+    ├── scraper-server/CLAUDE.md +  scraper-domain/SKILL.md
+    └── frontend/CLAUDE.md      +   frontend-domain/SKILL.md</pre>
+</section>
+
+<!-- 4 -->
+<section id="s4">
+<h2>4. 심링크 아키텍처</h2>
+<p class="sub"><code>docs</code>에서 설정을 한 번만 수정하면 모든 프로젝트에 즉시 반영된다. 각 서비스 repo 안에 <code>.claude/</code>를 두지 않는다.</p>
+<div class="sym">
+  <div class="sym-box src">
+    <div class="sym-title">📁 docs/project-agent-config/my-backoffice/ &nbsp;(원본 · git 추적)</div>
+    <div class="sym-tags">
+      <span class="tag hi">CLAUDE.md</span>
+      <span class="tag hi">agents/</span>
+      <span class="tag hi">skills/</span>
+      <span class="tag hi">prds/</span>
+      <span class="tag hi">handoffs/</span>
+    </div>
+  </div>
+  <div class="arr">
+    <div class="arr-line"></div>
+    <span class="arr-label">SymbolicLink (심링크)</span>
+    <div class="arr-line"></div>
+  </div>
+  <div class="sym-box dst">
+    <div class="sym-title">📁 project-my-backoffice/ &nbsp;(작업 디렉토리)</div>
+    <div class="sym-tags">
+      <span class="tag">CLAUDE.md</span>
+      <span class="tag">.claude/agents/</span>
+      <span class="tag">.claude/skills/</span>
+      <span class="tag">prds/</span>
+      <span class="tag">handoffs/</span>
+    </div>
+  </div>
+</div>
+
+<h3>심링크 맵</h3>
+<div class="tw"><table>
+  <thead><tr><th>프로젝트 내 경로</th><th>타입</th><th>소스 (docs)</th></tr></thead>
+  <tbody>
+    <tr><td><code>project-{name}/CLAUDE.md</code></td><td>파일 심링크</td><td><code>project-agent-config/{name}/CLAUDE.md</code></td></tr>
+    <tr><td><code>project-{name}/.claude/agents/</code></td><td>디렉토리 심링크</td><td><code>project-agent-config/{name}/agents/</code></td></tr>
+    <tr><td><code>project-{name}/.claude/skills/</code></td><td>디렉토리 심링크</td><td><code>project-agent-config/{name}/skills/</code></td></tr>
+    <tr><td><code>project-{name}/prds/</code></td><td>디렉토리 심링크</td><td><code>project-agent-config/{name}/prds/</code></td></tr>
+    <tr><td><code>project-{name}/handoffs/</code></td><td>디렉토리 심링크</td><td><code>project-agent-config/{name}/handoffs/</code></td></tr>
+  </tbody>
+</table></div>
+
+<h3>심링크 생성 명령 (Windows PowerShell)</h3>
+<pre>New-Item -ItemType SymbolicLink -Path "project-{name}\CLAUDE.md"      -Target "docs\project-agent-config\{name}\CLAUDE.md"
+New-Item -ItemType SymbolicLink -Path "project-{name}\.claude\agents" -Target "docs\project-agent-config\{name}\agents"
+New-Item -ItemType SymbolicLink -Path "project-{name}\.claude\skills" -Target "docs\project-agent-config\{name}\skills"
+New-Item -ItemType SymbolicLink -Path "project-{name}\prds"           -Target "docs\project-agent-config\{name}\prds"
+New-Item -ItemType SymbolicLink -Path "project-{name}\handoffs"       -Target "docs\project-agent-config\{name}\handoffs"</pre>
+<div class="note"><strong>사전 조건</strong> — Windows 설정 → 개발자 모드 ON 또는 관리자 권한 터미널</div>
+
+<h3>.gitignore 처리</h3>
+<pre>CLAUDE.md
+.claude/
+prds/
+handoffs/</pre>
+</section>
+
+<!-- 5 -->
+<section id="s5">
+<h2>5. 컨텍스트 로딩 전략</h2>
+<h3>작업 복잡도에 따른 로딩 흐름</h3>
+<pre>Claude 세션 시작
+        │
+        ▼
+  CLAUDE.md 자동 로드 (프로젝트 전체 구조, 포트, 기술스택, 오케스트레이터 원칙)
+        │
+        ├─ 단순 작업?       → Main이 직접 처리
+        ├─ 중간 복잡도?     → be-agent / fe-agent 로드 후 위임
+        └─ 복잡/신규 기능?  → /handoff-generator → Gemini 핸드오프</pre>
+
+<h3>서비스별 컨텍스트 분리 (토큰 절약 핵심)</h3>
+<pre>작업: lotto-server 기능 추가
+        ├─ 로드: project CLAUDE.md
+        ├─ 로드: service-context/lotto-server/CLAUDE.md
+        └─ 로드: lotto-domain/SKILL.md
+
+        미로드: auth-server / gateway / scraper-server / frontend 컨텍스트</pre>
+</section>
+
+<!-- 6 -->
+<section id="s6">
+<h2>6. 에이전트 역할 분리</h2>
+<div class="mm">
+<div class="mermaid">
+flowchart TD
+    User(["👤 사용자"])
+    User -->|작업 요청| Main
+    subgraph Claude["Claude Code — 오케스트레이터"]
+        Main["🧠 Main Claude\n복잡도 판단 · 에이전트 위임 · 최종 승인"]
+        Main -->|중간 복잡도 BE| BE["⚙️ be-agent · Sonnet\nBE 구현 / 코드리뷰"]
+        Main -->|중간 복잡도 FE| FE["🎨 fe-agent · Sonnet\nFE 구현 / 코드리뷰"]
+        Main -->|아키텍처 · PRD · 핸드오프| Planner["📐 planner · Opus\n아키텍처 설계 / PRD / 핸드오프"]
+        Main -->|QA 요청| QA["🧪 qa · Sonnet\n테스트 계획 / QA 검증"]
+    end
+    Planner -->|핸드오프 문서 전달| Gemini
+    subgraph External["외부 AI"]
+        Gemini["🤖 Gemini\n고복잡도 구현 / 신규 서비스"]
+    end
+    Gemini -->|BE 코드리뷰 요청| BE
+    Gemini -->|FE 코드리뷰 요청| FE
+    BE -->|리뷰 결과| Main
+    FE -->|리뷰 결과| Main
+    QA -->|검증 결과| Main
+    Main -->|최종 결과| User
+    style Main fill:#4A90D9,color:#fff
+    style BE fill:#5BA85A,color:#fff
+    style FE fill:#5BA85A,color:#fff
+    style Planner fill:#9B59B6,color:#fff
+    style QA fill:#E67E22,color:#fff
+    style Gemini fill:#DB4437,color:#fff
+    style User fill:#21262d,color:#e6edf3
+</div>
+</div>
+
+<h3>복잡도별 처리 방식</h3>
+<div class="tw"><table>
+  <thead><tr><th>복잡도</th><th>기준</th><th>처리</th></tr></thead>
+  <tbody>
+    <tr><td><span class="badge g">단순</span></td><td>버그픽스, 파일 1~2개 수정</td><td>Main 직접 처리</td></tr>
+    <tr><td><span class="badge b">중간</span></td><td>여러 파일, 서비스 내 기능 추가</td><td>be-agent / fe-agent 위임</td></tr>
+    <tr><td><span class="badge r">복잡</span></td><td>신규 서비스, 아키텍처 변경</td><td>Gemini 핸드오프 (/handoff-generator)</td></tr>
+  </tbody>
+</table></div>
+</section>
+
+<!-- 7 -->
+<section id="s7">
+<h2>7. 스킬 시스템</h2>
+<p class="sub"><code>/skill-name</code> 형태로 호출하면 해당 <code>SKILL.md</code>의 템플릿과 규칙을 따라 실행된다.</p>
+
+<h3>글로벌 스킬</h3>
+<div class="tw"><table>
+  <thead><tr><th>스킬</th><th>파일 위치</th><th>용도</th></tr></thead>
+  <tbody>
+    <tr><td><code>/prd-writer</code></td><td><code>skills/prd-writer/SKILL.md</code></td><td>PRD 문서 작성</td></tr>
+    <tr><td><code>/handoff-generator</code></td><td><code>skills/handoff-generator/SKILL.md</code></td><td>Gemini 핸드오프 문서 생성</td></tr>
+    <tr><td><code>/code-reviewer</code></td><td><code>skills/code-reviewer/SKILL.md</code></td><td>코드 리뷰 체크리스트 실행</td></tr>
+  </tbody>
+</table></div>
+
+<h3>도메인 스킬 (서비스별)</h3>
+<div class="tw"><table>
+  <thead><tr><th>스킬</th><th>용도</th></tr></thead>
+  <tbody>
+    <tr><td><code>auth-domain</code></td><td>auth 서비스 헥사고날 아키텍처 패턴</td></tr>
+    <tr><td><code>gateway-domain</code></td><td>gateway 라우팅 패턴</td></tr>
+    <tr><td><code>lotto-domain</code></td><td>lotto 도메인 규칙 (배치, 랭크 계산)</td></tr>
+    <tr><td><code>scraper-domain</code></td><td>Playwright 스크래퍼 패턴</td></tr>
+    <tr><td><code>frontend-domain</code></td><td>Nuxt 컴포넌트 / 컴포저블 규칙</td></tr>
+  </tbody>
+</table></div>
+
+<h3>스킬 강제 규칙</h3>
+<pre>PRD 작성 요청      →  /prd-writer        스킬 사용 필수
+핸드오프 생성 요청 →  /handoff-generator 스킬 사용 필수
+코드 리뷰 요청     →  /code-reviewer     스킬 사용 필수</pre>
+</section>
+
+<!-- 8 -->
+<section id="s8">
+<h2>8. 핸드오프 문서 흐름</h2>
+<div class="steps">
+  <div class="step">
+    <div class="step-n">1</div>
+    <div class="step-b">
+      <span class="step-t">핸드오프 생성</span>
+      <span class="step-d">Main Claude → /handoff-generator → handoffs/{feature}/handoff-v1.md 생성</span>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-n">2</div>
+    <div class="step-b">
+      <span class="step-t">Gemini 구현</span>
+      <span class="step-d">핸드오프 문서 기반으로 구현, 질문은 QUESTIONS 섹션에 추가</span>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-n">3</div>
+    <div class="step-b">
+      <span class="step-t">Q&amp;A 사이클</span>
+      <span class="step-d">QUESTIONS → ANSWERS(Main) → CONFIRMED(Gemini) → RESOLVED(Main만)</span>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-n">4</div>
+    <div class="step-b">
+      <span class="step-t">코드 리뷰</span>
+      <span class="step-d">be-agent / fe-agent → /code-reviewer 스킬로 Gemini 코드 리뷰</span>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-n">5</div>
+    <div class="step-b">
+      <span class="step-t">최종 승인</span>
+      <span class="step-d">Main Claude + 사용자 최종 컨펌</span>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-n">6</div>
+    <div class="step-b">
+      <span class="step-t">완료 처리</span>
+      <span class="step-d">handoffs/ → reviewed/ 이동, 파일명에 -final 추가</span>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 9 -->
+<section id="s9">
+<h2>9. 파일 네이밍 규칙</h2>
+<div class="tw"><table>
+  <thead><tr><th>파일 종류</th><th>네이밍 규칙</th><th>예시</th></tr></thead>
+  <tbody>
+    <tr><td>핸드오프</td><td><code>handoff-{service}-{layer}-v{N}.md</code></td><td><code>handoff-lotto-backend-v1.md</code></td></tr>
+    <tr><td>PRD</td><td><code>prd-{feature-name}.md</code></td><td><code>prd-lotto-upgrade.md</code></td></tr>
+    <tr><td>에이전트</td><td><code>{role}.md</code></td><td><code>be-agent.md</code>, <code>planner.md</code></td></tr>
+    <tr><td>스킬</td><td><code>{skill-name}/SKILL.md</code></td><td><code>handoff-generator/SKILL.md</code></td></tr>
+    <tr><td>도메인 스킬</td><td><code>{domain}/SKILL.md</code></td><td><code>lotto-domain/SKILL.md</code></td></tr>
+  </tbody>
+</table></div>
+</section>
+
+<!-- 10 -->
+<section id="s10">
+<h2>10. 신규 프로젝트 세팅 체크리스트</h2>
+<ul class="ck">
+  <li>workspace/project-{name}/ 폴더 생성</li>
+  <li>docs/project-agent-config/{name}/ 폴더 생성</li>
+  <li class="sub">CLAUDE.md 작성 (아키텍처, 포트, 에이전트 원칙)</li>
+  <li class="sub">README.md 작성</li>
+  <li class="sub">agents/ 폴더 + 역할별 md 작성</li>
+  <li class="sub">skills/ 폴더 + 글로벌 스킬 작성</li>
+  <li class="sub">prds/ 폴더 생성</li>
+  <li class="sub">handoffs/ 폴더 생성</li>
+  <li class="sub">service-context/{service}/ + CLAUDE.md + 도메인 스킬</li>
+  <li>project-{name}/.claude/ 폴더 생성</li>
+  <li>심링크 5개 생성 (CLAUDE.md · agents/ · skills/ · prds/ · handoffs/)</li>
+  <li>각 서비스 repo .gitignore에 심링크 경로 추가</li>
+  <li>docs 변경사항 커밋 &amp; 푸시</li>
+</ul>
+</section>
+
+<footer>
+  <p>Claude + Gemini 멀티 AI 개발 환경 · 워크플로우 상세는 <code>agents-cowork/my-workflow.md</code> 참조</p>
+</footer>
+
+</div>
+
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: "dark",
+  themeVariables: {
+    darkMode: true,
+    background: "#161b22",
+    primaryColor: "#4A90D9",
+    primaryTextColor: "#e6edf3",
+    lineColor: "#8b949e",
+    edgeLabelBackground: "#161b22"
+  }
+});
+</script>
+</body>
+</html>

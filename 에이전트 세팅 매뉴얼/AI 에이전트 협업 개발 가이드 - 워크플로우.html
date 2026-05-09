@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 에이전트 협업 개발 가이드 - 워크플로우</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;
+  --bg2:#f8f9fa;
+  --bg3:#f1f3f5;
+  --border:#dee2e6;
+  --text:#212529;
+  --muted:#6c757d;
+  --blue:#1d4ed8;
+  --blue-light:#eff6ff;
+  --blue-mid:#bfdbfe;
+  --purple:#7c3aed;
+  --green:#059669;
+  --red:#dc2626;
+  --yellow:#d97706;
+}
+
+body.dark{
+  --bg:#0d1117;
+  --bg2:#161b22;
+  --bg3:#21262d;
+  --border:#30363d;
+  --text:#e6edf3;
+  --muted:#8b949e;
+  --blue:#58a6ff;
+  --blue-light:rgba(88,166,255,0.1);
+  --blue-mid:rgba(88,166,255,0.3);
+  --purple:#bc8cff;
+  --green:#3fb950;
+  --red:#f85149;
+  --yellow:#e3b341;
+}
+body.dark nav{background:rgba(13,17,23,0.95)}
+
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:"Noto Sans KR",-apple-system,sans-serif;font-size:15px;line-height:1.7}
+
+/* ── Print Button ── */
+.print-btn{
+  position:fixed;top:16px;right:20px;
+  background:var(--blue);color:white;border:none;
+  padding:9px 18px;border-radius:8px;font-size:0.83rem;font-weight:600;
+  cursor:pointer;font-family:"Noto Sans KR",sans-serif;
+  box-shadow:0 2px 8px rgba(29,78,216,0.25);z-index:200;
+}
+.print-btn:hover{background:#1e40af}
+
+/* ── Theme Toggle ── */
+.theme-btn{
+  position:fixed;top:16px;right:112px;
+  background:var(--bg3);color:var(--text);border:1px solid var(--border);
+  padding:9px 14px;border-radius:8px;font-size:0.83rem;font-weight:600;
+  cursor:pointer;font-family:"Noto Sans KR",sans-serif;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);z-index:200;transition:background .2s,color .2s,border-color .2s;
+}
+.theme-btn:hover{background:var(--border)}
+
+/* ── Nav ── */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(255,255,255,0.95);
+  border-bottom:1px solid var(--border);
+  padding:0 24px;
+}
+nav ul{display:flex;gap:4px;list-style:none;max-width:960px;margin:0 auto;overflow-x:auto;padding:10px 0}
+nav ul::-webkit-scrollbar{height:0}
+nav a{
+  color:var(--muted);text-decoration:none;font-size:12px;font-weight:500;
+  padding:4px 10px;border-radius:20px;white-space:nowrap;transition:all .2s;
+}
+nav a:hover{color:var(--blue);background:var(--blue-light)}
+
+/* ── Layout ── */
+.wrap{max-width:960px;margin:0 auto;padding:48px 24px 80px}
+
+/* ── Hero ── */
+.hero{text-align:center;padding:48px 0 40px;border-bottom:2px solid var(--border);margin-bottom:48px}
+.hero h1{font-size:26px;font-weight:700;color:var(--blue);margin-bottom:16px}
+.hero p{color:var(--muted);font-size:14px;line-height:1.9}
+.hero strong{color:var(--text);font-weight:600}
+
+/* ── Section ── */
+section{margin-bottom:52px;scroll-margin-top:60px}
+h2{
+  font-size:18px;font-weight:700;
+  padding:10px 0 10px 14px;
+  border-left:4px solid var(--blue);
+  color:var(--text);
+  margin-bottom:20px;
+  background:var(--blue-light);
+  border-radius:0 6px 6px 0;
+}
+h3{font-size:14px;font-weight:700;color:var(--blue);margin:24px 0 10px}
+p.sub{color:var(--muted);margin-bottom:16px;font-size:14px}
+p.body{color:var(--text);margin-bottom:12px;font-size:14px}
+
+/* ── Table ── */
+.tw{overflow-x:auto;margin:16px 0;border-radius:8px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{background:var(--blue-light);color:var(--blue);font-weight:700;padding:10px 16px;text-align:left;border-bottom:1px solid var(--blue-mid)}
+td{padding:10px 16px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--text)}
+tr:last-child td{border-bottom:none}
+tr:nth-child(even) td{background:var(--bg2)}
+
+/* ── Code ── */
+code{
+  font-family:"JetBrains Mono",Consolas,monospace;font-size:12px;
+  background:var(--bg3);padding:2px 7px;border-radius:4px;
+  color:var(--blue);border:1px solid var(--border);
+}
+pre{
+  background:var(--bg2);border:1px solid var(--border);
+  border-left:4px solid var(--blue);
+  border-radius:8px;padding:18px 20px;overflow-x:auto;
+  margin:16px 0;font-family:"JetBrains Mono",Consolas,monospace;
+  font-size:12.5px;line-height:1.7;color:var(--text);
+}
+strong{color:var(--text);font-weight:700}
+
+/* ── Note ── */
+.note{
+  background:var(--blue-light);border:1px solid var(--blue-mid);
+  border-left:4px solid var(--blue);border-radius:6px;
+  padding:12px 16px;font-size:13px;color:var(--muted);margin:16px 0;
+}
+.note strong{color:var(--blue)}
+
+/* ── Diagram Image ── */
+.diagram{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:8px;padding:24px;margin:16px 0;
+  display:flex;justify-content:center;overflow-x:auto;
+}
+.diagram img{max-width:100%;height:auto;display:block}
+
+/* ── Steps ── */
+.steps{display:flex;flex-direction:column;margin:16px 0}
+.step{display:flex;gap:16px;position:relative}
+.step:not(:last-child)::after{content:"";position:absolute;left:19px;top:44px;width:2px;height:calc(100% - 20px);background:var(--border)}
+.step-n{width:40px;height:40px;border-radius:50%;background:var(--blue-light);border:2px solid var(--blue);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--blue);font-size:14px;flex-shrink:0}
+.step-b{padding:8px 0 28px;flex:1}
+.step-t{display:block;color:var(--text);margin-bottom:6px;font-size:14px;font-weight:600}
+.step-d{color:var(--muted);font-size:13.5px;line-height:1.7}
+.step-d ul{padding-left:18px;margin-top:4px}
+.step-d li{margin-bottom:2px}
+
+/* ── Badge ── */
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;margin-right:4px}
+.g{background:rgba(5,150,105,.1);color:var(--green);border:1px solid rgba(5,150,105,.3)}
+.b{background:var(--blue-light);color:var(--blue);border:1px solid var(--blue-mid)}
+.p{background:rgba(124,58,237,.1);color:var(--purple);border:1px solid rgba(124,58,237,.3)}
+
+/* ── Flow feedback arrow ── */
+.feedback{
+  display:flex;align-items:center;gap:12px;
+  background:rgba(220,38,38,.05);border:1px solid rgba(220,38,38,.2);
+  border-radius:8px;padding:12px 16px;margin:16px 0;font-size:13px;
+}
+.feedback .arrow{color:var(--red);font-size:18px;font-weight:700}
+.feedback strong{color:var(--red)}
+
+/* ── Footer ── */
+footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--border);color:var(--muted);font-size:13px;text-align:center}
+
+/* ════════════ PRINT ════════════ */
+@media print{
+  @page{size:A4;margin:10mm 10mm}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
+
+  .print-btn{display:none}
+  .theme-btn{display:none}
+  nav{display:none}
+
+  body{font-size:12px;background:white}
+  .wrap{padding:0;max-width:100%}
+
+  /* 히어로 여백 축소 */
+  .hero{padding:6px 0 8px;margin-bottom:8px;border-bottom-width:1px}
+  .hero h1{font-size:16px;margin-bottom:4px}
+  .hero p{font-size:11px;line-height:1.5}
+
+  /* s1 섹션 여백 최소화 */
+  #s1{margin-bottom:0}
+  #s1 h2{font-size:12px;padding:4px 0 4px 10px;margin-bottom:6px}
+  #s1 .sub{font-size:10px;margin-bottom:4px}
+
+  /* 다이어그램 — 패딩 최소화 + 이미지 높이 제한으로 1페이지 내 수용 */
+  .diagram{padding:4px;margin:0;page-break-inside:avoid}
+  .diagram img{max-height:195mm;width:auto;max-width:100%;object-fit:contain}
+
+  /* 나머지 섹션 */
+  section{margin-bottom:20px;page-break-inside:avoid}
+  h2{font-size:13px;padding:6px 0 6px 11px}
+  h3{font-size:11px;margin:12px 0 6px}
+
+  pre{font-size:10.5px;padding:10px 12px;page-break-inside:avoid}
+  .tw{page-break-inside:avoid}
+  .steps{page-break-inside:avoid}
+
+  table{font-size:11px}
+  th,td{padding:6px 10px}
+
+  .note{padding:7px 10px;font-size:11px}
+  .feedback{padding:7px 10px;font-size:11px}
+}
+</style>
+</head>
+<body>
+
+<button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌙 다크</button>
+<button class="print-btn" onclick="window.print()">PDF 저장</button>
+
+<nav><ul>
+  <li><a href="#s1">1. 전체 플로우</a></li>
+  <li><a href="#s2">2. 플로우 요약</a></li>
+  <li><a href="#s3">3. 단계별 상세</a></li>
+</ul></nav>
+
+<div class="wrap">
+
+<div class="hero">
+  <h1>AI 에이전트 협업 개발 가이드 - 워크플로우</h1>
+  <p>Claude와 Gemini를 역할 분리하여 협업하는<br>
+  <strong>멀티 AI 에이전트 개발 워크플로우</strong>.<br>
+  토큰 절약 · 병렬 개발 · 코드 리뷰 자동화까지.</p>
+</div>
+
+<!-- 1 -->
+<section id="s1">
+<h2>1. 전체 플로우 다이어그램</h2>
+<p class="sub">바이브코딩(Claude ↔ Gemini 협업) 워크플로우 — Agent Orchestration</p>
+<div class="diagram">
+  <img src="./md-images/diagram-agent-orchestration-v2.png" alt="AI 에이전트 협업 워크플로우 다이어그램">
+</div>
+</section>
+
+<!-- 2 -->
+<section id="s2">
+<h2>2. 플로우 요약</h2>
+<div class="tw"><table>
+  <thead>
+    <tr>
+      <th>단계</th>
+      <th>참여자</th>
+      <th>산출물 및 경로 (예시)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1. 기획</strong></td>
+      <td><span class="badge b">사용자</span><span class="badge p">Main Claude</span><span class="badge g">기획자 에이전트</span></td>
+      <td><code>prds/lotto-service-prd.md</code></td>
+    </tr>
+    <tr>
+      <td><strong>2. 핸드오프</strong></td>
+      <td><span class="badge p">Main Claude</span></td>
+      <td>
+        <code>handoffs/lotto-service-backend-gemini-handoff.md</code><br>
+        <code>handoffs/lotto-service-frontend-gemini-handoff.md</code>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>3. 개발</strong></td>
+      <td><span class="badge g">Gemini BE 세션</span><span class="badge g">Gemini FE 세션</span> (독립)</td>
+      <td>각 서비스 소스 코드 및 단위 테스트</td>
+    </tr>
+    <tr>
+      <td><strong>4. 코드 리뷰</strong></td>
+      <td><span class="badge p">Claude BE 에이전트</span><span class="badge p">Claude FE 에이전트</span></td>
+      <td>리뷰 코멘트 및 리팩토링된 코드</td>
+    </tr>
+    <tr>
+      <td><strong>5. 통합 리뷰</strong></td>
+      <td><span class="badge b">사용자</span><span class="badge p">Main Claude</span></td>
+      <td>최종 승인 시그널</td>
+    </tr>
+    <tr>
+      <td><strong>6. QA</strong></td>
+      <td><span class="badge p">Main Claude</span></td>
+      <td>테스트 결과 리포트</td>
+    </tr>
+    <tr>
+      <td><strong>7. 배포 준비</strong></td>
+      <td>—</td>
+      <td>배포용 아티팩트 및 <code>docs/</code> 문서 업데이트</td>
+    </tr>
+  </tbody>
+</table></div>
+</section>
+
+<!-- 3 -->
+<section id="s3">
+<h2>3. 단계별 상세 프로세스</h2>
+
+<div class="steps">
+
+  <div class="step">
+    <div class="step-n">1</div>
+    <div class="step-b">
+      <span class="step-t">토큰 최적화 및 문서화 전략</span>
+      <div class="step-d">
+        <p>Claude Code는 서브에이전트 기능과 성능이 우수하나, <strong>토큰이 매우 부족한 제약</strong>이 존재한다.</p>
+        <p style="margin-top:8px">토큰 절약을 위해 기획 단계에서 <strong>PRD</strong> 및 이에 기반한 <strong>BE/FE 핸드오프(Handoff)</strong> 파일을 각각 마크다운(.md)으로 작성한다.</p>
+        <p style="margin-top:8px">Gemini가 해당 문서들을 참조하여 개발을 진행함으로써 불필요한 토큰 소모를 방지한다.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-n">2</div>
+    <div class="step-b">
+      <span class="step-t">병렬 개발 및 독립 세션</span>
+      <div class="step-d">
+        <p>각 <strong>BE와 FE는 독립된 세션</strong>에서 핸드오프 문서만을 참조하여 코드를 병렬로 작성한다.</p>
+        <ul>
+          <li>영역 간 간섭 최소화</li>
+          <li>개발 효율 극대화</li>
+          <li>각 세션은 핸드오프 문서를 컨텍스트로 시작 — 이전 기획 토큰 재소모 없음</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-n">3</div>
+    <div class="step-b">
+      <span class="step-t">클로드 서브에이전트 기반 코드 리뷰 및 리팩토링</span>
+      <div class="step-d">
+        <p>4단계 코드 리뷰는 <strong>Claude의 백엔드 및 프론트엔드 서브에이전트</strong>가 전담한다.</p>
+        <p style="margin-top:8px">서브에이전트 간 소통을 통해 전체 시스템 정합성 확보 및 최적의 구조로 리팩토링을 진행한다.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-n">4</div>
+    <div class="step-b">
+      <span class="step-t">최종 컨펌 및 QA 피드백 루프</span>
+      <div class="step-d">
+        <p>개발 및 리뷰 완료 후 <strong>Main 에이전트와 사용자</strong>의 최종 컨펌을 진행한다.</p>
+        <div class="feedback" style="margin-top:10px">
+          <span class="arrow">↩</span>
+          <span>승인 후 <strong>QA</strong> 단계 진입 — 실패 시 <strong>4단계(코드 리뷰)</strong>로 돌아가 보완 및 리팩토링 수행</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-n">5</div>
+    <div class="step-b">
+      <span class="step-t">완료 및 배포 준비</span>
+      <div class="step-d">
+        <p>QA 성공 시 <strong>배포 준비 완료 시그널</strong>을 전송한다.</p>
+        <p style="margin-top:8px">동시에 <code>docs/</code>의 관련 문서들을 최신 상태로 업데이트하며 프로세스를 종료한다.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="note">
+  <strong>핵심 원칙</strong> — PRD와 핸드오프 문서가 에이전트 간 유일한 컨텍스트 소스가 된다.
+  문서를 잘 작성할수록 Gemini 독립 세션의 품질이 올라가고, Claude의 리뷰·QA 부담이 줄어든다.
+</div>
+
+</section>
+
+</div><!-- /wrap -->
+
+<footer>AI 에이전트 협업 개발 가이드 - 워크플로우</footer>
+
+<script>
+(function(){
+  if(localStorage.getItem('theme')==='dark'){
+    document.body.classList.add('dark');
+  }
+})();
+function toggleTheme(){
+  const dark=document.body.classList.toggle('dark');
+  localStorage.setItem('theme',dark?'dark':'light');
+  document.getElementById('themeBtn').textContent=dark?'☀ 라이트':'🌙 다크';
+}
+window.addEventListener('DOMContentLoaded',function(){
+  if(document.body.classList.contains('dark')){
+    document.getElementById('themeBtn').textContent='☀ 라이트';
+  }
+});
+</script>
+</body>
+</html>
