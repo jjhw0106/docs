@@ -1,4 +1,4 @@
-﻿# Development Flow - Agent Orchestration
+﻿# AI 에이전트 협업 개발 가이드 - 워크플로우
 
 ## 바이브코딩(Claude <-> Gemini 협업) 워크플로우
 
